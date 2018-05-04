@@ -1,0 +1,11 @@
+django>=1.11, <2.0
+pytz==2016.7
+django-extensions==1.7.5
+drfdocs==0.0.11
+requests==2.18.4
+djangorestframework==3.5.3
+six
+social-auth-core >= 1.2.0
+mock==2.0.0
+codecov==2.0.7
+tox==2.7.0
