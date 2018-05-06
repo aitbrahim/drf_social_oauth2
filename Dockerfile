@@ -12,14 +12,8 @@ RUN apk add --update curl \
 
 RUN apk add gdal --update-cache --repository http://dl-3.alpinelinux.org/alpine/edge/testing/ --allow-untrusted
 
-COPY requirements/common.txt /opt/pip/requirements/common.txt
-RUN pip install -r /opt/pip/requirements/common.txt
-
-COPY requirements/development.txt /opt/pip/requirements/development.txt
-RUN pip install -r /opt/pip/requirements/development.txt
-
-COPY requirements/test.txt /opt/pip/requirements/test.txt
-RUN pip install -r /opt/pip/requirements/test.txt
+COPY requirements/base.txt /opt/pip/requirements/base.txt
+RUN pip install -r /opt/pip/requirements/base.txt
 
 
 ADD . /opt/app
