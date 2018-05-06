@@ -11,12 +11,6 @@ from .serializers import OAuth2RequiredFieldsSerializer
 logger = logging.getLogger(__name__)
 
 
-
-
-
-logger = logging.getLogger(__name__)
-
-
 def validate_data(strategy, details, backend, user=None, *args, **kwargs):
     if not user:
         serializer = OAuth2RequiredFieldsSerializer(data=details, context={'request': strategy.request})

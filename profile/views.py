@@ -1,5 +1,4 @@
 from rest_framework import mixins
-from rest_framework import generics
 from rest_framework import permissions
 from rest_framework import status
 from rest_framework import viewsets
@@ -81,28 +80,3 @@ class AuthenticateViewSet(viewsets.GenericViewSet, mixins.CreateModelMixin):
         headers = self.get_success_headers(serializer.data)
         # Updates caching when user logs in
         return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
-
-
-from oauth2.utils import psa
-from serializers import OAuth2Serializer
-
-
-class OAuth2View(generics.CreateAPIView):
-    @psa()
-    def post(self, request, *args, **kwargs):
-        print request
-        serializer = OAuth2Serializer(data=request.data, context={'request': request})
-        serializer.is_valid(raise_exception=True)
-        # The user is populated after the validation went successfully
-        return Response({
-            'key': serializer.key,
-            'id': serializer.user.pk
-        })
-
-# --------------------Test templates ---------------------------
-from django.shortcuts import render_to_response, redirect
-
-
-def home(request):
-    """Home view, displays login mechanism"""
-    return render_to_response('index.html')

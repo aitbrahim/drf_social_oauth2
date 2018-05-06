@@ -5,4 +5,4 @@ from django.apps import AppConfig
 
 
 class AccountConfig(AppConfig):
-    name = 'oauth2'
+    name = 'social_oauth2'

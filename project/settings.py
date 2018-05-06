@@ -44,7 +44,7 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',
     'rest_framework_docs',
     'profile',
-    'oauth2'
+    'social_oauth2'
 
 ]
 
@@ -126,7 +126,7 @@ STATIC_ROOT = public_assets()
 
 # SOCIAL auth config
 AUTHENTICATION_BACKENDS = (
-    'oauth2.backends.facebook.FacebookOAuth2',
+    'social_oauth2.backends.facebook.FacebookOAuth2',
 )
 
 # Facebook
@@ -142,15 +142,15 @@ SOCIAL_AUTH_FACEBOOK_API_VERSION = '3.0'
 
 
 SOCIAL_AUTH_PIPELINE = (
-    'oauth2.pipeline.social_auth.social_details',
-    'oauth2.pipeline.social_auth.social_uid',
-    'oauth2.pipeline.social_auth.social_user',
-    'oauth2.pipeline.social_auth.associate_by_email',
+    'social_oauth2.pipeline.social_auth.social_details',
+    'social_oauth2.pipeline.social_auth.social_uid',
+    'social_oauth2.pipeline.social_auth.social_user',
+    'social_oauth2.pipeline.social_auth.associate_by_email',
     # 'profile.pipeline.validate_data',
-    'oauth2.pipeline.user.create_user',
-    'oauth2.pipeline.social_auth.associate_user',
-    'oauth2.pipeline.social_auth.load_extra_data',
-    'oauth2.pipeline.user.user_details',
+    'social_oauth2.pipeline.user.create_user',
+    'social_oauth2.pipeline.social_auth.associate_user',
+    'social_oauth2.pipeline.social_auth.load_extra_data',
+    'social_oauth2.pipeline.user.user_details',
     'profile.pipeline.create_token',
     # 'django_profile.pipeline.save_profile_picture',
 )

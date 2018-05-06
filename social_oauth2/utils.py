@@ -37,8 +37,8 @@ def module_member(name):
 
 
 AUTHENTICATION_BACKENDS = settings.AUTHENTICATION_BACKENDS
-STRATEGY = getattr(settings, 'STRATEGY', 'oauth2.strategy.DjangoStrategy')
-STORAGE = getattr(settings, 'STORAGE', 'oauth2.models.DjangoStorage')
+STRATEGY = getattr(settings, 'STRATEGY', 'social_oauth2.strategy.DjangoStrategy')
+STORAGE = getattr(settings, 'STORAGE', 'social_oauth2.models.DjangoStorage')
 
 
 def load_strategy():
