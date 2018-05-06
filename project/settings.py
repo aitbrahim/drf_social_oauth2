@@ -43,7 +43,9 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework.authtoken',
     'rest_framework_docs',
-    'social'
+    'profile',
+    'oauth2'
+
 ]
 
 MIDDLEWARE = [
@@ -70,7 +72,7 @@ ROOT_URLCONF = 'project.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [os.path.join(BASE_DIR, "templates")],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -79,6 +81,7 @@ TEMPLATES = [
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
             ],
+
         },
     },
 ]
@@ -96,7 +99,7 @@ DATABASES = {
     }
 }
 
-AUTH_USER_MODEL = 'social.User'
+AUTH_USER_MODEL = 'profile.User'
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.8/topics/i18n/
@@ -118,3 +121,37 @@ USE_TZ = True
 STATIC_URL = '/static/'
 # STATIC_ROOT
 STATIC_ROOT = public_assets()
+
+
+
+# SOCIAL auth config
+AUTHENTICATION_BACKENDS = (
+    'oauth2.backends.facebook.FacebookOAuth2',
+    'social_core.backends.google.GoogleOAuth2'
+)
+
+# Facebook
+
+SOCIAL_AUTH_FACEBOOK_KEY = '174280429741376'
+SOCIAL_AUTH_FACEBOOK_SECRET = 'fe84f7f3e150708bef7e4837a52fee62'
+SOCIAL_AUTH_FACEBOOK_SCOPE = ['email', ]  # optional
+# This is mandatory since facebook does return the email authorization api
+SOCIAL_AUTH_FACEBOOK_PROFILE_EXTRA_PARAMS = {
+  'fields': 'id, name, email'
+}
+SOCIAL_AUTH_FACEBOOK_API_VERSION = '3.0'
+
+
+SOCIAL_AUTH_PIPELINE = (
+    'oauth2.pipeline.social_auth.social_details',
+    'oauth2.pipeline.social_auth.social_uid',
+    'oauth2.pipeline.social_auth.social_user',
+    'oauth2.pipeline.social_auth.associate_by_email',
+    # 'profile.pipeline.validate_data',
+    'oauth2.pipeline.user.create_user',
+    'oauth2.pipeline.social_auth.associate_user',
+    'oauth2.pipeline.social_auth.load_extra_data',
+    'oauth2.pipeline.user.user_details',
+    'profile.pipeline.create_token',
+    # 'django_profile.pipeline.save_profile_picture',
+)
