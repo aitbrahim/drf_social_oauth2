@@ -13,7 +13,7 @@ urlpatterns = [
         views.AuthenticateViewSet.as_view({'post': 'create'}),
         name='sign-in'),
 
-    url(r'^users/auth', OAuth2View.as_view(),
+    url(r'^users/auth/(?P<backend>[^/]+)', OAuth2View.as_view(),
         name='register_by_access_token'),
 ]
 

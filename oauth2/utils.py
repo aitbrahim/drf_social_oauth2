@@ -49,7 +49,7 @@ def psa(redirect_uri=None):
     def decorator(func):
         @wraps(func)
         def wrapper(self, request, *args, **kwargs):
-            backend = 'facebook'
+            backend = self.kwargs.get('backend', None)
             uri = redirect_uri
             if uri and not uri.startswith('/'):
                 uri = reverse(redirect_uri, args=(backend,))
