@@ -28,5 +28,5 @@ WORKDIR /opt/app
 EXPOSE 8000
 
 ENTRYPOINT ["/opt/app/docker-entrypoint.sh"]
-CMD ["api"]
+CMD ["api", "migrate-first"]
 

@@ -7,7 +7,7 @@ interactions:
       Connection: [keep-alive]
       User-Agent: [python-requests/2.18.4]
     method: GET
-    uri: https://graph.facebook.com/v2.11/me?access_token=EAACegdMbJUABAP4quJdL59IedfVAmhiFCxlop9zAETp544rsKko6rkbJf09chUcKl8caUJIKtXslEJcs2cq7ORMb1ZAH8vZBQqCJAUE8ZC0ZCe7GD9ClFDkcpMKtv9ofgZBmDbejgnZArRsLzHWZB3HuKsEZBEZCuywxcHPWB703Ejl5ZAG5kmVKxWOGyc4IBIVIXhZCLJimOnGOgZDZD
+    uri: https://graph.facebook.com/v3.0/me?access_token=EAACegdMbJUABAP4quJdL59IedfVAmhiFCxlop9zAETp544rsKko6rkbJf09chUcKl8caUJIKtXslEJcs2cq7ORMb1ZAH8vZBQqCJAUE8ZC0ZCe7GD9ClFDkcpMKtv9ofgZBmDbejgnZArRsLzHWZB3HuKsEZBEZCuywxcHPWB703Ejl5ZAG5kmVKxWOGyc4IBIVIXhZCLJimOnGOgZDZD&fields=id%2C+name%2C+email&appsecret_proof=3daa0eaceaa80df92309ccd403c9b9616fb352b5897e1d508e719bfa75e8fc6b>
   response:
     body: {string: !!python/unicode '{"id":"1197788670349572","name":"Ait Brahim Mostapha","email":"most1993afa\u0040gmail.com"}'}
     headers:
