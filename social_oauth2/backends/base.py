@@ -50,7 +50,7 @@ class BaseAuth(object):
             return out
         user = out.get('user')
         if user:
-            user.social_user = out.get('profile')
+            user.social_user = out.get('drf_auth')
             user.is_new = out.get('is_new')
         return user
 

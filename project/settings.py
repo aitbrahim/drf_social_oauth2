@@ -43,7 +43,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework.authtoken',
     'rest_framework_docs',
-    'profile',
+    'drf_auth',
     'social_oauth2'
 
 ]
@@ -99,7 +99,7 @@ DATABASES = {
     }
 }
 
-AUTH_USER_MODEL = 'profile.User'
+AUTH_USER_MODEL = 'drf_auth.User'
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.8/topics/i18n/
@@ -146,11 +146,10 @@ SOCIAL_AUTH_PIPELINE = (
     'social_oauth2.pipeline.social_auth.social_uid',
     'social_oauth2.pipeline.social_auth.social_user',
     'social_oauth2.pipeline.social_auth.associate_by_email',
-    # 'profile.pipeline.validate_data',
+    # 'drf_auth.pipeline.validate_data',
     'social_oauth2.pipeline.user.create_user',
     'social_oauth2.pipeline.social_auth.associate_user',
     'social_oauth2.pipeline.social_auth.load_extra_data',
     'social_oauth2.pipeline.user.user_details',
-    'profile.pipeline.create_token',
-    # 'django_profile.pipeline.save_profile_picture',
+    'drf_auth.pipeline.create_token',
 )

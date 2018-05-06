@@ -5,4 +5,4 @@ from django.apps import AppConfig
 
 
 class AccountConfig(AppConfig):
-    name = 'profile'
+    name = 'drf_auth'
