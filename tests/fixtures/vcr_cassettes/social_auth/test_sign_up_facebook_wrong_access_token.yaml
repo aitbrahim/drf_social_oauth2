@@ -1,0 +1,29 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      User-Agent: [python-requests/2.18.4]
+    method: GET
+    uri: https://graph.facebook.com/v2.11/me?access_token=wrong+access_token&fields=id%2C+name%2C+email&appsecret_proof=0a78bcc9a60e36ccce9a3fb00e6912f9d311890ac64d21d7219a72575eec4c60
+  response:
+    body: {string: !!python/unicode '{"error":{"message":"Invalid OAuth access token.","type":"OAuthException","code":190,"fbtrace_id":"AhdvcY2l\/Mu"}}'}
+    headers:
+      access-control-allow-origin: ['*']
+      cache-control: [no-store]
+      connection: [keep-alive]
+      content-length: ['114']
+      content-type: [application/json; charset=UTF-8]
+      date: ['Wed, 15 Nov 2017 13:02:52 GMT']
+      expires: ['Sat, 01 Jan 2000 00:00:00 GMT']
+      pragma: [no-cache]
+      strict-transport-security: [max-age=15552000; preload]
+      www-authenticate: [OAuth "Facebook Platform" "invalid_token" "Invalid OAuth
+          access token."]
+      x-fb-debug: [qnV7Zsh6fOA67WvUhLWt4DhQzDkscBhcwdC3qv6V+PFqoW3bwrff8TwNEJbS6YzND/l7/xnsT2chWqGlcjhv9Q==]
+      x-fb-rev: ['3457554']
+      x-fb-trace-id: [AhdvcY2l/Mu]
+    status: {code: 400, message: Bad Request}
+version: 1

@@ -1,0 +1,29 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      User-Agent: [python-requests/2.18.4]
+    method: GET
+    uri: https://graph.facebook.com/v2.11/me?access_token=EAACegdMbJUABAP4quJdL59IedfVAmhiFCxlop9zAETp544rsKko6rkbJf09chUcKl8caUJIKtXslEJcs2cq7ORMb1ZAH8vZBQqCJAUE8ZC0ZCe7GD9ClFDkcpMKtv9ofgZBmDbejgnZArRsLzHWZB3HuKsEZBEZCuywxcHPWB703Ejl5ZAG5kmVKxWOGyc4IBIVIXhZCLJimOnGOgZDZD
+  response:
+    body: {string: !!python/unicode '{"id":"1197788670349572","name":"Ait Brahim Mostapha","email":"most1993afa\u0040gmail.com"}'}
+    headers:
+      access-control-allow-origin: ['*']
+      cache-control: ['private, no-cache, no-store, must-revalidate']
+      connection: [keep-alive]
+      content-length: ['90']
+      content-type: [application/json; charset=UTF-8]
+      date: ['Wed, 15 Nov 2017 14:31:07 GMT']
+      etag: ['"118042e030d740f7c48e2902ff37ed714877f701"']
+      expires: ['Sat, 01 Jan 2000 00:00:00 GMT']
+      facebook-api-version: [v2.10]
+      pragma: [no-cache]
+      strict-transport-security: [max-age=15552000; preload]
+      x-fb-debug: [hjJpQqMtPaKIzqr7rH2W5/wu1Fmbi3H304QtFZlBln33CLeR3xVU7pH1zRcRLbJDiOPQ4ygkEgsgmELSySLvww==]
+      x-fb-rev: ['3457604']
+      x-fb-trace-id: [AgEHVFV2T3g]
+    status: {code: 200, message: OK}
+version: 1
