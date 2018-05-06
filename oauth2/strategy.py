@@ -1,104 +1,69 @@
-# coding=utf-8
 from django.conf import settings
 from django.http import HttpResponse, HttpRequest
-from django.db.models import Model
-from django.contrib.contenttypes.models import ContentType
-from django.contrib.auth import authenticate
 from django.shortcuts import redirect, resolve_url
-from django.template import TemplateDoesNotExist, loader, engines
-from django.utils.crypto import get_random_string
 from django.utils.encoding import force_text
 from django.utils.functional import Promise
-from django.utils.translation import get_language
-
-from .base_strategy import BaseStrategy, BaseTemplateStrategy
-from .compat import get_request_port
+from .utils import setting_name
+from .pipeline import DEFAULT_AUTH_PIPELINE
 
 
-def render_template_string(request, html, context=None):
-    """Take a templates in the form of a string and render it for the
-    given context"""
-    template = engines['django'].from_string(html)
-    return template.render(context=context, request=request)
+class BaseStrategy(object):
+
+    def __init__(self, storage=None):
+        self.storage = storage
+
+    def setting(self, name, default=None, backend=None):
+        names = [setting_name(name), name]
+        if backend:
+            names.insert(0, setting_name(backend.name, name))
+        for name in names:
+            try:
+                return self.get_setting(name)
+            except (AttributeError, KeyError):
+                pass
+        return default
+
+    def create_user(self, *args, **kwargs):
+        return self.storage.user.create_user(*args, **kwargs)
+
+    def get_user(self, *args, **kwargs):
+        return self.storage.user.get_user(*args, **kwargs)
+
+    def get_pipeline(self, backend=None):
+        return self.setting('PIPELINE', DEFAULT_AUTH_PIPELINE, backend)
+
+    def get_backends(self):
+        """Return configured backends"""
+        return self.setting('AUTHENTICATION_BACKENDS', [])
+
+    def absolute_uri(self, path=None):
+        uri = self.build_absolute_uri(path)
+        if uri and self.setting('REDIRECT_IS_HTTPS'):
+            uri = uri.replace('http://', 'https://')
+        return uri
+
+    def request_data(self, merge=True):
+        """Return current request data (POST or GET)"""
+        raise NotImplementedError('Implement in subclass')
+
+    def build_absolute_uri(self, path=None):
+        """Build absolute URI with given (optional) path"""
+        raise NotImplementedError('Implement in subclass')
+
+    def get_setting(self, name):
+        """Return value for given setting name"""
+        raise NotImplementedError('Implement in subclass')
 
 
-class DjangoTemplateStrategy(BaseTemplateStrategy):
-    def render_template(self, tpl, context):
-        template = loader.get_template(tpl)
-        return template.render(context=context, request=self.strategy.request)
 
-    def render_string(self, html, context):
-        return render_template_string(self.strategy.request, html, context)
 
 
 class DjangoStrategy(BaseStrategy):
-    DEFAULT_TEMPLATE_STRATEGY = DjangoTemplateStrategy
 
-    def __init__(self, storage, request=None, tpl=None):
+    def __init__(self, storage, request=None):
         self.request = request
         self.session = request.session if request else {}
-        super(DjangoStrategy, self).__init__(storage, tpl)
-
-    def get_setting(self, name):
-        value = getattr(settings, name)
-        # Force text on URL named settings that are instance of Promise
-        if name.endswith('_URL'):
-            if isinstance(value, Promise):
-                value = force_text(value)
-            value = resolve_url(value)
-        return value
-
-    def request_data(self, merge=True):
-        if not self.request:
-            return {}
-        if merge:
-            data = self.request.GET.copy()
-            data.update(self.request.POST)
-        elif self.request.method == 'POST':
-            data = self.request.POST
-        else:
-            data = self.request.GET
-        return data
-
-    def request_host(self):
-        if self.request:
-            return self.request.get_host()
-
-    def request_is_secure(self):
-        """Is the request using HTTPS?"""
-        return self.request.is_secure()
-
-    def request_path(self):
-        """path of the current request"""
-        return self.request.path
-
-    def request_port(self):
-        """Port in use for this request"""
-        return get_request_port(request=self.request)
-
-    def request_get(self):
-        """Request GET data"""
-        return self.request.GET.copy()
-
-    def request_post(self):
-        """Request POST data"""
-        return self.request.POST.copy()
-
-    def redirect(self, url):
-        return redirect(url)
-
-    def html(self, content):
-        return HttpResponse(content, content_type='text/html;charset=UTF-8')
-
-    def render_html(self, tpl=None, html=None, context=None):
-        if not tpl and not html:
-            raise ValueError('Missing templates or html parameters')
-        context = context or {}
-        try:
-            template = loader.get_template(tpl)
-            return template.render(context=context, request=self.request)
-        except TemplateDoesNotExist:
-            return render_template_string(self.request, html, context)
+        super(DjangoStrategy, self).__init__(storage)
 
     def authenticate(self, backend, *args, **kwargs):
         """Trigger the authentication mechanism tied to the current
@@ -116,19 +81,17 @@ class DjangoStrategy(BaseStrategy):
             kwargs['request'], args = args[0], args[1:]
         return args, kwargs
 
-    def session_get(self, name, default=None):
-        return self.session.get(name, default)
-
-    def session_set(self, name, value):
-        self.session[name] = value
-        if hasattr(self.session, 'modified'):
-            self.session.modified = True
-
-    def session_pop(self, name):
-        return self.session.pop(name, None)
-
-    def session_setdefault(self, name, value):
-        return self.session.setdefault(name, value)
+    def request_data(self, merge=True):
+        if not self.request:
+            return {}
+        if merge:
+            data = self.request.GET.copy()
+            data.update(self.request.POST)
+        elif self.request.method == 'POST':
+            data = self.request.POST
+        else:
+            data = self.request.GET
+        return data
 
     def build_absolute_uri(self, path=None):
         if self.request:
@@ -136,27 +99,11 @@ class DjangoStrategy(BaseStrategy):
         else:
             return path
 
-    def random_string(self, length=12, chars=BaseStrategy.ALLOWED_CHARS):
-        return get_random_string(length, chars)
-
-    def to_session_value(self, val):
-        """Converts values that are instance of Model to a dictionary
-        with enough information to retrieve the instance back later."""
-        if isinstance(val, Model):
-            val = {
-                'pk': val.pk,
-                'ctype': ContentType.objects.get_for_model(val).pk
-            }
-        return val
-
-    def from_session_value(self, val):
-        """Converts back the instance saved by self._ctype function."""
-        if isinstance(val, dict) and 'pk' in val and 'ctype' in val:
-            ctype = ContentType.objects.get_for_id(val['ctype'])
-            ModelClass = ctype.model_class()
-            val = ModelClass.objects.get(pk=val['pk'])
-        return val
-
-    def get_language(self):
-        """Return current language"""
-        return get_language()
+    def get_setting(self, name):
+        value = getattr(settings, name)
+        # Force text on URL named settings that are instance of Promise
+        if name.endswith('_URL'):
+            if isinstance(value, Promise):
+                value = force_text(value)
+            value = resolve_url(value)
+        return value

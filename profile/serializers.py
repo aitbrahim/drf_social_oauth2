@@ -69,7 +69,7 @@ class AuthenticateSerializer(serializers.Serializer):
         return attrs
 
 
-from social_core.exceptions import InvalidEmail, SocialAuthBaseException
+from oauth2.exceptions import InvalidEmail, SocialAuthBaseException
 from requests.exceptions import HTTPError
 
 

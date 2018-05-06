@@ -8,7 +8,7 @@ from django.core.exceptions import ValidationError
 from django.conf import settings
 from django.db import models
 
-from social_core.utils import setting_name
+from .utils import setting_name
 
 try:
     from django.utils.encoding import smart_unicode as smart_text

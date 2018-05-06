@@ -1,13 +1,9 @@
 """Django ORM models for Social Auth"""
-import base64
 import six
 import sys
 from django.db import transaction
 from django.db.utils import IntegrityError
-
-from social_core.storage import UserMixin, AssociationMixin, NonceMixin, \
-                                CodeMixin, PartialMixin, BaseStorage
-
+from .mixins import UserMixin
 
 class DjangoUserMixin(UserMixin):
     """Social Auth association model"""
@@ -135,65 +131,5 @@ class DjangoUserMixin(UserMixin):
         return social_auth
 
 
-class DjangoNonceMixin(NonceMixin):
-    @classmethod
-    def use(cls, server_url, timestamp, salt):
-        return cls.objects.get_or_create(server_url=server_url,
-                                         timestamp=timestamp,
-                                         salt=salt)[1]
-
-
-class DjangoAssociationMixin(AssociationMixin):
-    @classmethod
-    def store(cls, server_url, association):
-        # Don't use get_or_create because issued cannot be null
-        try:
-            assoc = cls.objects.get(server_url=server_url,
-                                    handle=association.handle)
-        except cls.DoesNotExist:
-            assoc = cls(server_url=server_url,
-                        handle=association.handle)
-        assoc.secret = base64.encodestring(association.secret)
-        assoc.issued = association.issued
-        assoc.lifetime = association.lifetime
-        assoc.assoc_type = association.assoc_type
-        assoc.save()
-
-    @classmethod
-    def get(cls, *args, **kwargs):
-        return cls.objects.filter(*args, **kwargs)
-
-    @classmethod
-    def remove(cls, ids_to_delete):
-        cls.objects.filter(pk__in=ids_to_delete).delete()
-
-
-class DjangoCodeMixin(CodeMixin):
-    @classmethod
-    def get_code(cls, code):
-        try:
-            return cls.objects.get(code=code)
-        except cls.DoesNotExist:
-            return None
-
-
-class DjangoPartialMixin(PartialMixin):
-    @classmethod
-    def load(cls, token):
-        try:
-            return cls.objects.get(token=token)
-        except cls.DoesNotExist:
-            return None
-
-    @classmethod
-    def destroy(cls, token):
-        partial = cls.load(token)
-        if partial:
-            partial.delete()
-
-
-class BaseDjangoStorage(BaseStorage):
+class BaseDjangoStorage(object):
     user = DjangoUserMixin
-    nonce = DjangoNonceMixin
-    association = DjangoAssociationMixin
-    code = DjangoCodeMixin

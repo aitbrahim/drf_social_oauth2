@@ -84,7 +84,6 @@ class AuthenticateViewSet(viewsets.GenericViewSet, mixins.CreateModelMixin):
 
 
 from oauth2.utils import psa
-from rest_framework import views
 from serializers import OAuth2Serializer
 
 
@@ -99,7 +98,6 @@ class OAuth2View(generics.CreateAPIView):
             'key': serializer.key,
             'id': serializer.user.pk
         })
-
 
 # --------------------Test templates ---------------------------
 from django.shortcuts import render_to_response, redirect

@@ -1,16 +1,13 @@
 """Django ORM models for Social Auth"""
-import six
 from django.db import models
 from django.conf import settings
-from .storage import DjangoUserMixin, DjangoAssociationMixin, \
-                     DjangoNonceMixin, DjangoCodeMixin, \
-                     DjangoPartialMixin, BaseDjangoStorage
+from .storage import DjangoUserMixin, BaseDjangoStorage
 
 
 from django.db.utils import IntegrityError
 from .utils import setting_name
 #
-from .compat import get_rel_model
+from .utils import get_rel_model
 
 
 from .fields import JSONField
@@ -74,61 +71,8 @@ class UserSocialAuth(AbstractUserSocialAuth):
         db_table = 'social_auth_usersocialauth'
 
 
-class Nonce(models.Model, DjangoNonceMixin):
-    """One use numbers"""
-    server_url = models.CharField(max_length=NONCE_SERVER_URL_LENGTH)
-    timestamp = models.IntegerField()
-    salt = models.CharField(max_length=65)
-
-    class Meta:
-        unique_together = ('server_url', 'timestamp', 'salt')
-        db_table = 'social_auth_nonce'
-
-
-class Association(models.Model, DjangoAssociationMixin):
-    """OpenId account association"""
-    server_url = models.CharField(max_length=ASSOCIATION_SERVER_URL_LENGTH)
-    handle = models.CharField(max_length=ASSOCIATION_HANDLE_LENGTH)
-    secret = models.CharField(max_length=255)  # Stored base64 encoded
-    issued = models.IntegerField()
-    lifetime = models.IntegerField()
-    assoc_type = models.CharField(max_length=64)
-
-    class Meta:
-        db_table = 'social_auth_association'
-        unique_together = (
-            ('server_url', 'handle',)
-        )
-
-
-class Code(models.Model, DjangoCodeMixin):
-    email = models.EmailField(max_length=EMAIL_LENGTH)
-    code = models.CharField(max_length=32, db_index=True)
-    verified = models.BooleanField(default=False)
-    timestamp = models.DateTimeField(auto_now_add=True, db_index=True)
-
-    class Meta:
-        db_table = 'social_auth_code'
-        unique_together = ('email', 'code')
-
-
-class Partial(models.Model, DjangoPartialMixin):
-    token = models.CharField(max_length=32, db_index=True)
-    next_step = models.PositiveSmallIntegerField(default=0)
-    backend = models.CharField(max_length=32)
-    data = JSONField()
-    timestamp = models.DateTimeField(auto_now_add=True, db_index=True)
-
-    class Meta:
-        db_table = 'social_auth_partial'
-
-
 class DjangoStorage(BaseDjangoStorage):
     user = UserSocialAuth
-    nonce = Nonce
-    association = Association
-    code = Code
-    partial = Partial
 
     @classmethod
     def is_integrity_error(cls, exception):

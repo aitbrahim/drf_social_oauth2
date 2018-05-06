@@ -127,7 +127,6 @@ STATIC_ROOT = public_assets()
 # SOCIAL auth config
 AUTHENTICATION_BACKENDS = (
     'oauth2.backends.facebook.FacebookOAuth2',
-    'social_core.backends.google.GoogleOAuth2'
 )
 
 # Facebook
